@@ -8,6 +8,8 @@ import com.rockpaperscissors.dto.request.RegisterRequest;
 import com.rockpaperscissors.dto.response.AuthResponse;
 import com.rockpaperscissors.dto.response.LoginResponse;
 import com.rockpaperscissors.entity.User;
+import com.rockpaperscissors.exception.InvalidCredentialsException;
+import com.rockpaperscissors.exception.UserAlreadyExistsException;
 import com.rockpaperscissors.repository.UserRepository;
 
 @Service
@@ -24,10 +26,10 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new UserAlreadyExistsException("username", request.getUsername());
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new UserAlreadyExistsException("email", request.getEmail());
         }
 
         User user = User.builder()
@@ -42,10 +44,10 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+                .orElseThrow(() -> new InvalidCredentialsException());
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+            throw new InvalidCredentialsException();
         }
 
         String token = jwtService.generateToken(user.getEmail());

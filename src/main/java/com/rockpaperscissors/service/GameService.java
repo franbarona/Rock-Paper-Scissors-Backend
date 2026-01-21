@@ -8,6 +8,7 @@ import com.rockpaperscissors.dto.response.GamePlayResponse;
 import com.rockpaperscissors.entity.GameMatch;
 import com.rockpaperscissors.entity.User;
 import com.rockpaperscissors.enums.GameResult;
+import com.rockpaperscissors.exception.UserNotFoundException;
 import com.rockpaperscissors.enums.GameMove;
 import com.rockpaperscissors.repository.GameMatchRepository;
 import com.rockpaperscissors.repository.UserRepository;
@@ -26,7 +27,7 @@ public class GameService {
 
     public GamePlayResponse playMove(GameMove playerMove, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userEmail));
 
         GameMove computerMove = RandomMoveSelector.selectRandomMove();
         GameResult result = GameRuleEngine.determineWinner(playerMove, computerMove);
@@ -47,7 +48,7 @@ public class GameService {
     }
 
     public List<GamePlayResponse> getHistory(String userEmail) {
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException(userEmail));
         List<GameMatch> matches = gameMatchRepository.findByUserIdOrderByPlayedAtDesc(user.getId());
         return matches.stream().map(match -> GamePlayResponse.builder()
                 .id(match.getId())
