@@ -1,21 +1,35 @@
 package com.rockpaperscissors.service;
 
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
+import com.rockpaperscissors.entity.GameResult;
 import com.rockpaperscissors.model.GameMove;
-import com.rockpaperscissors.model.GameResult;
+import com.rockpaperscissors.repository.GameResultRepository;
 
 @Service
 public class GameService {
     private static final Random random = new Random();
+    private final GameResultRepository gameResultRepository;
+
+    public GameService(GameResultRepository gameResultRepository) {
+        this.gameResultRepository = gameResultRepository;
+    }
 
     public GameResult playMove(GameMove playerMove) {
         GameMove computerMove = getRandomMove();
         String result = determineWinner(playerMove, computerMove);
 
-        return new GameResult(playerMove, computerMove, result);
+        GameResult gameResult = new GameResult(playerMove, computerMove, result);
+        gameResultRepository.save(gameResult);
+
+        return gameResult;
+    }
+
+    public List<GameResult> getHistory() {
+        return gameResultRepository.findAllByOrderByPlayedAtDesc();
     }
 
     private GameMove getRandomMove() {

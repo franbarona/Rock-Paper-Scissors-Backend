@@ -1,10 +1,12 @@
 package com.rockpaperscissors.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.rockpaperscissors.dto.GamePlayRequest;
-import com.rockpaperscissors.model.GameResult;
+import com.rockpaperscissors.entity.GameResult;
 import com.rockpaperscissors.service.GameService;
 
 @RestController
@@ -21,5 +23,10 @@ public class GameController {
     public ResponseEntity<GameResult> playMove(@RequestBody GamePlayRequest request) {
         GameResult result = gameService.playMove(request.getMove());
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<GameResult>> getHistory() {
+        return ResponseEntity.ok(gameService.getHistory());
     }
 }
