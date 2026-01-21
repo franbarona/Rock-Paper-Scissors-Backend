@@ -12,6 +12,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -33,13 +35,18 @@ public class GameResult {
     @CreationTimestamp
     private LocalDateTime playedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public GameResult() {
     }
 
-    public GameResult(GameMove playerMove, GameMove computerMove, String result) {
+    public GameResult(GameMove playerMove, GameMove computerMove, String result, User user) {
         this.playerMove = playerMove;
         this.computerMove = computerMove;
         this.result = result;
+        this.user = user;
     }
 
     // Getters
@@ -61,5 +68,9 @@ public class GameResult {
 
     public LocalDateTime getPlayedAt() {
         return playedAt;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

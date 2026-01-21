@@ -5,6 +5,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Secret files
+.env
+
 # Database files
 *.db
 

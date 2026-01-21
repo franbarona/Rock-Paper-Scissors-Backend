@@ -9,5 +9,5 @@ import com.rockpaperscissors.entity.GameResult;
 
 @Repository
 public interface GameResultRepository extends JpaRepository<GameResult, Long> {
-    List<GameResult> findAllByOrderByPlayedAtDesc();
+    List<GameResult> findByUserIdOrderByPlayedAtDesc(Long userId);
 }
