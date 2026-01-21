@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.rockpaperscissors.model.GameMove;
+import com.rockpaperscissors.enums.GameMove;
+import com.rockpaperscissors.enums.GameResult;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,10 +16,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "game_results")
-public class GameResult {
+@Table(name = "game_matches")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class GameMatch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +39,8 @@ public class GameResult {
     @Enumerated(EnumType.STRING)
     private GameMove computerMove;
 
-    private String result;
+    @Enumerated(EnumType.STRING)
+    private GameResult result;
 
     @CreationTimestamp
     private LocalDateTime playedAt;
@@ -38,39 +48,4 @@ public class GameResult {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    public GameResult() {
-    }
-
-    public GameResult(GameMove playerMove, GameMove computerMove, String result, User user) {
-        this.playerMove = playerMove;
-        this.computerMove = computerMove;
-        this.result = result;
-        this.user = user;
-    }
-
-    // Getters
-    public Long getId() {
-        return id;
-    }
-
-    public GameMove getPlayerMove() {
-        return playerMove;
-    }
-
-    public GameMove getComputerMove() {
-        return computerMove;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public LocalDateTime getPlayedAt() {
-        return playedAt;
-    }
-
-    public User getUser() {
-        return user;
-    }
 }

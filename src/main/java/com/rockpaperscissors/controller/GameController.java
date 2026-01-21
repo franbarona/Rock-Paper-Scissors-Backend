@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.rockpaperscissors.dto.request.GamePlayRequest;
-import com.rockpaperscissors.entity.GameResult;
+import com.rockpaperscissors.dto.response.GamePlayResponse;
 import com.rockpaperscissors.service.GameService;
 
 @RestController
@@ -21,18 +21,19 @@ public class GameController {
     }
 
     @PostMapping("/play")
-    public ResponseEntity<GameResult> playMove(
+    public ResponseEntity<GamePlayResponse> playMove(
             Authentication authentication,
             @RequestBody GamePlayRequest request) {
-        String userEmail = authentication.getName();
-        GameResult result = gameService.playMove(request.getMove(), userEmail);
-        return ResponseEntity.ok(result);
+        String email = authentication.getName();
+        GamePlayResponse response = gameService.playMove(request.getMove(), email);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<GameResult>> getHistory(
+    public ResponseEntity<List<GamePlayResponse>> getHistory(
             Authentication authentication) {
-        String userEmail = authentication.getName();
-        return ResponseEntity.ok(gameService.getHistory(userEmail));
+        String email = authentication.getName();
+        List<GamePlayResponse> history = gameService.getHistory(email);
+        return ResponseEntity.ok(history);
     }
 }

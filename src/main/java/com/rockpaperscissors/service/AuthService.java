@@ -30,11 +30,11 @@ public class AuthService {
             throw new RuntimeException("Email already exists");
         }
 
-        User user = new User(
-            request.getUsername(),
-            request.getEmail(),
-            passwordEncoder.encode(request.getPassword())
-        );
+        User user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
         userRepository.save(user);
         String token = jwtService.generateToken(user.getEmail());
         return new AuthResponse(token, user.getEmail());
@@ -51,5 +51,4 @@ public class AuthService {
         String token = jwtService.generateToken(user.getEmail());
         return new LoginResponse(token, user.getUsername(), user.getEmail(), user.getId());
     }
-    
 }

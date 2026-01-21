@@ -1,4 +1,4 @@
-package com.rockpaperscissors.model;
+package com.rockpaperscissors.enums;
 
 public enum GameMove {
     ROCK("ROCK"),

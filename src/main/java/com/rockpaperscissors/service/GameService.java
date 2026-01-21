@@ -1,57 +1,59 @@
 package com.rockpaperscissors.service;
 
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
-import com.rockpaperscissors.entity.GameResult;
+import com.rockpaperscissors.dto.response.GamePlayResponse;
+import com.rockpaperscissors.entity.GameMatch;
 import com.rockpaperscissors.entity.User;
-import com.rockpaperscissors.model.GameMove;
-import com.rockpaperscissors.repository.GameResultRepository;
+import com.rockpaperscissors.enums.GameResult;
+import com.rockpaperscissors.enums.GameMove;
+import com.rockpaperscissors.repository.GameMatchRepository;
 import com.rockpaperscissors.repository.UserRepository;
+import com.rockpaperscissors.utils.RandomMoveSelector;
+import com.rockpaperscissors.utils.GameRuleEngine;
 
 @Service
 public class GameService {
-    private static final Random random = new Random();
-    private final GameResultRepository gameResultRepository;
+    private final GameMatchRepository gameMatchRepository;
     private final UserRepository userRepository;
 
-    public GameService(GameResultRepository gameResultRepository, UserRepository userRepository) {
-        this.gameResultRepository = gameResultRepository;
+    public GameService(GameMatchRepository gameMatchRepository, UserRepository userRepository) {
+        this.gameMatchRepository = gameMatchRepository;
         this.userRepository = userRepository;
     }
 
-    public GameResult playMove(GameMove playerMove, String userEmail) {
+    public GamePlayResponse playMove(GameMove playerMove, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        GameMove computerMove = getRandomMove();
-        String result = determineWinner(playerMove, computerMove);
+        GameMove computerMove = RandomMoveSelector.selectRandomMove();
+        GameResult result = GameRuleEngine.determineWinner(playerMove, computerMove);
 
-        GameResult gameResult = new GameResult(playerMove, computerMove, result, user);
-        gameResultRepository.save(gameResult);
-        return gameResult;
+        GameMatch gameMatch = GameMatch.builder()
+                .playerMove(playerMove)
+                .computerMove(computerMove)
+                .result(result)
+                .user(user)
+                .build();
+        gameMatchRepository.save(gameMatch);
+        return GamePlayResponse.builder()
+                .id(gameMatch.getId())
+                .playerMove(playerMove.getName())
+                .computerMove(computerMove.getName())
+                .result(result.getName())
+                .build();
     }
 
-    public List<GameResult> getHistory(String userEmail) {
+    public List<GamePlayResponse> getHistory(String userEmail) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
-        return gameResultRepository.findByUserIdOrderByPlayedAtDesc(user.getId());
-    }
-
-    private GameMove getRandomMove() {
-        GameMove[] moves = GameMove.values();
-        return moves[random.nextInt(moves.length)];
-    }
-
-    private String determineWinner(GameMove player, GameMove computer) {
-        if (player == computer)
-            return "DRAW";
-
-        return switch (player) {
-            case ROCK -> computer == GameMove.SCISSORS ? "WIN" : "LOSE";
-            case PAPER -> computer == GameMove.ROCK ? "WIN" : "LOSE";
-            case SCISSORS -> computer == GameMove.PAPER ? "WIN" : "LOSE";
-        };
+        List<GameMatch> matches = gameMatchRepository.findByUserIdOrderByPlayedAtDesc(user.getId());
+        return matches.stream().map(match -> GamePlayResponse.builder()
+                .id(match.getId())
+                .playerMove(match.getPlayerMove().getName())
+                .computerMove(match.getComputerMove().getName())
+                .result(match.getResult().getName())
+                .build()).toList();
     }
 }
