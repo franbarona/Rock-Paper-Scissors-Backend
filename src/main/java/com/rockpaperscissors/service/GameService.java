@@ -13,17 +13,16 @@ import com.rockpaperscissors.enums.GameMove;
 import com.rockpaperscissors.repository.GameMatchRepository;
 import com.rockpaperscissors.repository.UserRepository;
 import com.rockpaperscissors.utils.RandomMoveSelector;
+
+import lombok.RequiredArgsConstructor;
+
 import com.rockpaperscissors.utils.GameRuleEngine;
 
 @Service
+@RequiredArgsConstructor
 public class GameService {
     private final GameMatchRepository gameMatchRepository;
     private final UserRepository userRepository;
-
-    public GameService(GameMatchRepository gameMatchRepository, UserRepository userRepository) {
-        this.gameMatchRepository = gameMatchRepository;
-        this.userRepository = userRepository;
-    }
 
     public GamePlayResponse playMove(GameMove playerMove, String userEmail) {
         User user = userRepository.findByEmail(userEmail)

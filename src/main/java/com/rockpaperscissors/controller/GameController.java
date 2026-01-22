@@ -11,15 +11,14 @@ import com.rockpaperscissors.dto.response.ApiResponse;
 import com.rockpaperscissors.dto.response.GamePlayResponse;
 import com.rockpaperscissors.service.GameService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/game")
+@RequiredArgsConstructor
 public class GameController {
 
     private final GameService gameService;
-
-    public GameController(GameService gameService) {
-        this.gameService = gameService;
-    }
 
     @PostMapping("/play")
     public ResponseEntity<ApiResponse<GamePlayResponse>> playMove(
