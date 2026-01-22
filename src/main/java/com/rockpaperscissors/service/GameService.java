@@ -40,9 +40,9 @@ public class GameService {
         gameMatchRepository.save(gameMatch);
         return GamePlayResponse.builder()
                 .id(gameMatch.getId())
-                .playerMove(playerMove.getName())
-                .computerMove(computerMove.getName())
-                .result(result.getName())
+                .playerMove(playerMove)
+                .computerMove(computerMove)
+                .result(result)
                 .build();
     }
 
@@ -51,9 +51,9 @@ public class GameService {
         List<GameMatch> matches = gameMatchRepository.findByUserIdOrderByPlayedAtDesc(user.getId());
         return matches.stream().map(match -> GamePlayResponse.builder()
                 .id(match.getId())
-                .playerMove(match.getPlayerMove().getName())
-                .computerMove(match.getComputerMove().getName())
-                .result(match.getResult().getName())
+                .playerMove(match.getPlayerMove())
+                .computerMove(match.getComputerMove())
+                .result(match.getResult())
                 .build()).toList();
     }
 }
