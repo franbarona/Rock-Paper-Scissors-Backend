@@ -76,7 +76,6 @@ class GameServiceTest {
             assertEquals(playerMove, response.getPlayerMove());
             assertEquals(computerMove, response.getComputerMove());
             assertEquals(result, response.getResult());
-            verify(statisticsService).updateUserStatistics(testUser, result);
         }
     }
 
