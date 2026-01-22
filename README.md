@@ -38,3 +38,21 @@ Then create and edit `.env` with your values. **Generate a secure JWT_SECRET:**
 ```
 
 The API will be available at: **http://localhost:8080**
+
+## Running Tests
+
+### Run all tests
+```bash
+./mvnw test
+```
+
+### Run a specific test class
+```bash
+./mvnw test -Dtest=YourTestClassName
+```
+
+### Run tests with verbose output
+```bash
+./mvnw test -X
+```
+
