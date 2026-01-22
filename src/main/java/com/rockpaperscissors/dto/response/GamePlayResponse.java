@@ -1,5 +1,8 @@
 package com.rockpaperscissors.dto.response;
 
+import com.rockpaperscissors.enums.GameMove;
+import com.rockpaperscissors.enums.GameResult;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class GamePlayResponse {
 
     private Long id;
-    private String playerMove;
-    private String computerMove;
-    private String result;
+    private GameMove playerMove;
+    private GameMove computerMove;
+    private GameResult result;
 }
