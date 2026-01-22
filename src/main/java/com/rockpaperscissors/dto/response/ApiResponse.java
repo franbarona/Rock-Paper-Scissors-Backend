@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class ApiResponse<T> {
     private String message;
     private T data;
     private String errorCode;
-    private LocalDateTime timestamp;
+    private String timestamp;
 
     // Constructor for successful responses
     public static <T> ApiResponse<T> success(T data, String message) {
@@ -26,7 +27,7 @@ public class ApiResponse<T> {
                 .success(true)
                 .message(message)
                 .data(data)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .build();
     }
 
@@ -40,7 +41,7 @@ public class ApiResponse<T> {
                 .success(false)
                 .message(message)
                 .errorCode(errorCode)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .build();
     }
 }
