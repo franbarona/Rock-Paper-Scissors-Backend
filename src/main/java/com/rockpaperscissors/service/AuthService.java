@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.rockpaperscissors.dto.request.LoginRequest;
 import com.rockpaperscissors.dto.request.RegisterRequest;
-import com.rockpaperscissors.dto.response.AuthResponse;
 import com.rockpaperscissors.dto.response.LoginResponse;
+import com.rockpaperscissors.dto.response.RegisterResponse;
 import com.rockpaperscissors.entity.User;
 import com.rockpaperscissors.exception.InvalidCredentialsException;
 import com.rockpaperscissors.exception.UserAlreadyExistsException;
@@ -21,7 +21,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthResponse register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new UserAlreadyExistsException("username", request.getUsername());
         }
@@ -36,7 +36,7 @@ public class AuthService {
                 .build();
         User savedUser = userRepository.save(user);
         String token = jwtService.generateToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUsername());
-        return new AuthResponse(token, savedUser.getEmail());
+        return new RegisterResponse(token, savedUser.getUsername(), savedUser.getEmail(), savedUser.getId());
     }
 
     public LoginResponse login(LoginRequest request) {

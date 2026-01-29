@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rockpaperscissors.dto.request.LoginRequest;
 import com.rockpaperscissors.dto.request.RegisterRequest;
 import com.rockpaperscissors.dto.response.ApiResponse;
-import com.rockpaperscissors.dto.response.AuthResponse;
 import com.rockpaperscissors.dto.response.LoginResponse;
+import com.rockpaperscissors.dto.response.RegisterResponse;
 import com.rockpaperscissors.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -26,8 +26,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
-        AuthResponse response = authService.register(request);
+    public ResponseEntity<ApiResponse<RegisterResponse>> register(@Valid @RequestBody RegisterRequest request) {
+        RegisterResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response, "User registered successfully"));
     }
 

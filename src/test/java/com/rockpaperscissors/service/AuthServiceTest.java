@@ -24,8 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.rockpaperscissors.dto.request.LoginRequest;
 import com.rockpaperscissors.dto.request.RegisterRequest;
-import com.rockpaperscissors.dto.response.AuthResponse;
 import com.rockpaperscissors.dto.response.LoginResponse;
+import com.rockpaperscissors.dto.response.RegisterResponse;
 import com.rockpaperscissors.entity.User;
 import com.rockpaperscissors.exception.InvalidCredentialsException;
 import com.rockpaperscissors.exception.UserAlreadyExistsException;
@@ -69,7 +69,7 @@ class AuthServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(jwtService.generateToken(anyLong(), anyString(), anyString())).thenReturn(TEST_TOKEN);
 
-        AuthResponse response = authService.register(request);
+        RegisterResponse response = authService.register(request);
 
         assertNotNull(response);
         assertEquals(TEST_TOKEN, response.getToken());

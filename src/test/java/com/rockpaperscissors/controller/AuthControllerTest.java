@@ -19,8 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rockpaperscissors.dto.request.LoginRequest;
 import com.rockpaperscissors.dto.request.RegisterRequest;
-import com.rockpaperscissors.dto.response.AuthResponse;
 import com.rockpaperscissors.dto.response.LoginResponse;
+import com.rockpaperscissors.dto.response.RegisterResponse;
 import com.rockpaperscissors.exception.InvalidCredentialsException;
 import com.rockpaperscissors.exception.UserAlreadyExistsException;
 import com.rockpaperscissors.service.AuthService;
@@ -39,6 +39,7 @@ class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static final Long TEST_USER_ID = 1L;
     private static final String TEST_USERNAME = "testuser";
     private static final String TEST_EMAIL = "test@example.com";
     private static final String TEST_PASSWORD = "password123";
@@ -47,7 +48,7 @@ class AuthControllerTest {
 
     private RegisterRequest registerRequest;
     private LoginRequest loginRequest;
-    private AuthResponse authResponse;
+    private RegisterResponse registerResponse;
     private LoginResponse loginResponse;
 
     @BeforeEach
@@ -63,13 +64,15 @@ class AuthControllerTest {
                 .password(TEST_PASSWORD)
                 .build();
 
-        authResponse = AuthResponse.builder()
+        registerResponse = RegisterResponse.builder()
                 .token(TEST_TOKEN)
+                .username(TEST_USERNAME)
                 .email(TEST_EMAIL)
+                .id(TEST_USER_ID)
                 .build();
 
         loginResponse = LoginResponse.builder()
-                .id(1L)
+                .id(TEST_USER_ID)
                 .username(TEST_USERNAME)
                 .email(TEST_EMAIL)
                 .token(TEST_TOKEN)
@@ -82,7 +85,7 @@ class AuthControllerTest {
     @DisplayName("Should register user successfully")
     void testRegisterSuccessfully() throws Exception {
         when(authService.register(any(RegisterRequest.class)))
-                .thenReturn(authResponse);
+                .thenReturn(registerResponse);
 
         mockMvc.perform(post(API_BASE + "/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +94,9 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("User registered successfully"))
                 .andExpect(jsonPath("$.data.token").value(TEST_TOKEN))
-                .andExpect(jsonPath("$.data.email").value(TEST_EMAIL));
+                .andExpect(jsonPath("$.data.email").value(TEST_EMAIL))
+                .andExpect(jsonPath("$.data.username").value(TEST_USERNAME))
+                .andExpect(jsonPath("$.data.id").value(1L));
     }
 
     @Test
