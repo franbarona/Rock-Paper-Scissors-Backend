@@ -21,9 +21,11 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expirationTime;
 
-    public String generateToken(String email) {
+    public String generateToken(Long userId, String email, String username) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("userId", userId)
+                .claim("username", username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(keyProvider.getSigningKey(), SignatureAlgorithm.HS256)
