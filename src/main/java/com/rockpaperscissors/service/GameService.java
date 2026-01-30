@@ -23,6 +23,7 @@ import com.rockpaperscissors.utils.GameRuleEngine;
 public class GameService {
     private final GameMatchRepository gameMatchRepository;
     private final UserRepository userRepository;
+    private final StatisticsService statisticsService;
 
     public GamePlayResponse playMove(GameMove playerMove, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
@@ -38,6 +39,7 @@ public class GameService {
                 .user(user)
                 .build();
         gameMatchRepository.save(gameMatch);
+        statisticsService.updateUserStatistics(user, result);
         return GamePlayResponse.builder()
                 .id(gameMatch.getId())
                 .playerMove(playerMove)
@@ -48,12 +50,13 @@ public class GameService {
 
     public List<GamePlayResponse> getHistory(String userEmail) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException(userEmail));
-        List<GameMatch> matches = gameMatchRepository.findByUserIdOrderByPlayedAtDesc(user.getId());
+        List<GameMatch> matches = gameMatchRepository.findTop5ByUserIdOrderByPlayedAtDesc(user.getId());
         return matches.stream().map(match -> GamePlayResponse.builder()
                 .id(match.getId())
                 .playerMove(match.getPlayerMove())
                 .computerMove(match.getComputerMove())
                 .result(match.getResult())
+                .playedAt(match.getPlayedAt().toString())
                 .build()).toList();
     }
 }

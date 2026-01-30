@@ -9,5 +9,5 @@ import com.rockpaperscissors.entity.GameMatch;
 
 @Repository
 public interface GameMatchRepository extends JpaRepository<GameMatch, Long> {
-    List<GameMatch> findByUserIdOrderByPlayedAtDesc(Long userId);
+    List<GameMatch> findTop5ByUserIdOrderByPlayedAtDesc(Long userId);
 }

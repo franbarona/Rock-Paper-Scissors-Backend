@@ -9,6 +9,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +77,7 @@ class GameServiceTest {
             assertEquals(playerMove, response.getPlayerMove());
             assertEquals(computerMove, response.getComputerMove());
             assertEquals(result, response.getResult());
+            verify(statisticsService).updateUserStatistics(testUser, result);
         }
     }
 
@@ -98,7 +100,7 @@ class GameServiceTest {
                 createGameMatch(2L, GameMove.PAPER, GameMove.ROCK, GameResult.WIN));
 
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(testUser));
-        when(gameMatchRepository.findByUserIdOrderByPlayedAtDesc(testUser.getId())).thenReturn(matches);
+        when(gameMatchRepository.findTop5ByUserIdOrderByPlayedAtDesc(testUser.getId())).thenReturn(matches);
 
         List<GamePlayResponse> history = gameService.getHistory(TEST_EMAIL);
 
@@ -112,14 +114,14 @@ class GameServiceTest {
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> gameService.getHistory(TEST_EMAIL));
-        verify(gameMatchRepository, never()).findByUserIdOrderByPlayedAtDesc(any());
+        verify(gameMatchRepository, never()).findTop5ByUserIdOrderByPlayedAtDesc(any());
     }
 
     @Test
     @DisplayName("Should return empty list when user has no history")
     void testGetHistoryEmpty() {
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(testUser));
-        when(gameMatchRepository.findByUserIdOrderByPlayedAtDesc(testUser.getId())).thenReturn(List.of());
+        when(gameMatchRepository.findTop5ByUserIdOrderByPlayedAtDesc(testUser.getId())).thenReturn(List.of());
 
         List<GamePlayResponse> history = gameService.getHistory(TEST_EMAIL);
 
@@ -135,6 +137,7 @@ class GameServiceTest {
         match.setComputerMove(computerMove);
         match.setResult(result);
         match.setUser(testUser);
+        match.setPlayedAt(LocalDateTime.now());
         return match;
     }
 }

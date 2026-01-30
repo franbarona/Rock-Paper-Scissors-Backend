@@ -1,5 +1,8 @@
 package com.rockpaperscissors.dto.response;
 
+import java.util.Optional;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rockpaperscissors.enums.GameMove;
 import com.rockpaperscissors.enums.GameResult;
 
@@ -18,4 +21,5 @@ public class GamePlayResponse {
     private GameMove playerMove;
     private GameMove computerMove;
     private GameResult result;
+    private String playedAt;
 }
