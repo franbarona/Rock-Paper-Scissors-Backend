@@ -20,6 +20,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final StatisticsService statisticsService;
 
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -36,6 +37,7 @@ public class AuthService {
                 .build();
         User savedUser = userRepository.save(user);
         String token = jwtService.generateToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUsername());
+        statisticsService.updateUserStatistics(savedUser, null); // Initialize statistics
         return new RegisterResponse(token, savedUser.getUsername(), savedUser.getEmail(), savedUser.getId());
     }
 

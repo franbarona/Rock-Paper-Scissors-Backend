@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.rockpaperscissors.dto.response.UserStatisticsResponse;
 import com.rockpaperscissors.entity.User;
 import com.rockpaperscissors.entity.UserStatistics;
+import com.rockpaperscissors.enums.GameResult;
 import com.rockpaperscissors.exception.StatisticsNotFoundException;
 import com.rockpaperscissors.exception.UserNotFoundException;
 import com.rockpaperscissors.repository.UserRepository;
@@ -39,7 +40,7 @@ public class StatisticsService {
                 .build();
     }
 
-    public void updateUserStatistics(User user, com.rockpaperscissors.enums.GameResult result) {
+    public void updateUserStatistics(User user, GameResult result) {
         UserStatistics stats = userStatisticsRepository.findByUserId(user.getId())
                 .orElseGet(() -> {
                     return UserStatistics.builder()
@@ -51,6 +52,11 @@ public class StatisticsService {
                             .build();
                 });
 
+        // Initialization case, do not update wins/losses/draws
+        if (result == null) {
+            userStatisticsRepository.save(stats);
+            return;
+        }
         stats.setTotalMatches(stats.getTotalMatches() + 1);
         switch (result) {
             case WIN -> stats.setTotalWins(stats.getTotalWins() + 1);

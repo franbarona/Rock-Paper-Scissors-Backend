@@ -38,4 +38,13 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(ApiResponse.error(ex.getMessage(), ex.getErrorCode()));
     }
+
+    @ExceptionHandler(StatisticsNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleStatisticsNotFoundException(
+            StatisticsNotFoundException ex) {
+        log.error("Statistics not found: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(ex.getMessage(), ex.getErrorCode()));
+    }
 }
