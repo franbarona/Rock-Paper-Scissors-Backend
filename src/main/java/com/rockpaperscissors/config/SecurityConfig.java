@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtExceptionHandler)
                         .accessDeniedHandler(jwtExceptionHandler))
                 .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/game/**").authenticated()
                         .requestMatchers("/api/user/**").authenticated()
