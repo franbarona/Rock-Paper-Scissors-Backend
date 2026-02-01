@@ -27,7 +27,9 @@ Backend API for Rock Paper Scissors game built with Spring Boot and SQLite.
 - Maven 3.9+
 - Git
 
-## Installation
+## Getting Started
+
+### Installation
 
 ```bash
 # Clone the repository
@@ -40,7 +42,25 @@ cd backend
 ./mvnw clean install
 ```
 
-## Running the Application
+### Configure environment variables
+
+Copy the example file:
+
+```bash
+cp .env.example .env
+```
+
+Then create and edit `.env` with your values.
+
+Copy the example file or create it manually:
+
+```bash
+cp .env.example .env
+```
+
+Update `.env` with your values. **Generate a secure JWT_SECRET**
+
+### Running the Application
 
 ```bash
 # Run the Spring Boot application
@@ -49,18 +69,12 @@ cd backend
 # The server will start on http://localhost:8080
 ```
 
-## Running Tests
+### Running Tests
 
 ```bash
 # Run all tests
 ./mvnw test
 
-# Run tests with coverage
-./mvnw test jacoco:report
-
 # Run a specific test class
 ./mvnw test -Dtest=AuthServiceTest
-
-# Run a specific test method
-./mvnw test -Dtest=AuthServiceTest#testLoginSuccess
 ```
