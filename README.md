@@ -1,58 +1,66 @@
-# Rock-Paper-Scissors-Backend
+# Rock Paper Scissors - Backend
+
 Backend API for Rock Paper Scissors game built with Spring Boot and SQLite.
 
-## Technologies
-- **Java 17**
-- **Maven 3.9**
-- **SQLite** (automatically included)
+## Features
 
-## Getting Started
+- User authentication with JWT tokens
+- Game logic and move validation
+- Game statistics and history tracking
+- Persistent data storage with SQLite
+- Comprehensive error handling
+- RESTful API with standardized responses
 
-### 1. Clone the repository
+## Tech Stack
+
+- Java 17
+- Spring Boot
+- SQLite
+- Maven 3.9
+- JWT Authentication
+- SLF4J Logging
+- JUnit & Mockito (Testing)
+
+## Prerequisites
+
+- Java 17 or higher
+- Maven 3.9+
+- Git
+
+## Installation
 
 ```bash
-git clone https://github.com/franbarona/Rock-Paper-Scissors-Backend.git
-cd rps-backend
+# Clone the repository
+git clone 
+
+# Navigate to backend directory
+cd backend
+
+# Install dependencies
+./mvnw clean install
 ```
 
-### 2. Configure environment variables
-
-Copy the example file:
+## Running the Application
 
 ```bash
-cp .env.example .env
-```
-
-Then create and edit `.env` with your values. **Generate a secure JWT_SECRET:**
-
-### 3. Build the project
-
-```bash
-./mvnw clean install -U
-```
-
-### 4. Run the application
-
-```bash
+# Run the Spring Boot application
 ./mvnw spring-boot:run
-```
 
-The API will be available at: **http://localhost:8080**
+# The server will start on http://localhost:8080
+```
 
 ## Running Tests
 
-### Run all tests
 ```bash
+# Run all tests
 ./mvnw test
-```
 
-### Run a specific test class
-```bash
-./mvnw test -Dtest=YourTestClassName
-```
+# Run tests with coverage
+./mvnw test jacoco:report
 
-### Run tests with verbose output
-```bash
-./mvnw test -X
-```
+# Run a specific test class
+./mvnw test -Dtest=AuthServiceTest
 
+# Run a specific test method
+./mvnw test -Dtest=AuthServiceTest#testLoginSuccess
+```
