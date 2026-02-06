@@ -13,8 +13,8 @@ Backend API for Rock Paper Scissors game built with Spring Boot and SQLite.
 
 ## Tech Stack
 
-- Java 17
-- Spring Boot
+- Java 21
+- Spring Boot 3.5.10
 - SQLite
 - Maven 3.9
 - JWT Authentication
@@ -23,7 +23,7 @@ Backend API for Rock Paper Scissors game built with Spring Boot and SQLite.
 
 ## Prerequisites
 
-- Java 17 or higher
+- Java 21 or higher
 - Maven 3.9+
 - Git
 
