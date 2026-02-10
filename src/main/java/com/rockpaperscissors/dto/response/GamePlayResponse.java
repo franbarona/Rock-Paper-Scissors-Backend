@@ -1,8 +1,7 @@
 package com.rockpaperscissors.dto.response;
 
-import java.util.Optional;
+import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rockpaperscissors.enums.GameMove;
 import com.rockpaperscissors.enums.GameResult;
 
@@ -17,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GamePlayResponse {
 
-    private Long id;
+    private UUID id;
     private GameMove playerMove;
     private GameMove computerMove;
     private GameResult result;

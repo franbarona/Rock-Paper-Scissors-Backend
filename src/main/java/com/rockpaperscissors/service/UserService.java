@@ -8,6 +8,9 @@ import com.rockpaperscissors.exception.UserNotFoundException;
 import com.rockpaperscissors.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,16 +19,16 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
 
-    public UserResponse getCurrentUser(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
+    public UserResponse getCurrentUser(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id.toString()));
 
         return mapToUserResponse(user);
     }
 
-    public UserResponse updateCurrentUser(String email, UpdateUserRequest request) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
+    public UserResponse updateCurrentUser(UUID id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id.toString()));
 
         if (!user.getEmail().equals(request.getEmail())
                 && userRepository.existsByEmail(request.getEmail())) {
@@ -42,7 +45,7 @@ public class UserService {
         user.setUsername(request.getUsername());
 
         User updatedUser = userRepository.save(user);
-        log.info("User updated: {} (id: {})", updatedUser.getEmail(), updatedUser.getId());
+        log.info("User updated: {} (id: {})", updatedUser.getEmail(), updatedUser.getId().toString());
 
         return mapToUserResponse(updatedUser);
     }

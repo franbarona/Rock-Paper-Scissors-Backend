@@ -1,6 +1,7 @@
 package com.rockpaperscissors.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -25,10 +26,9 @@ public class GameService {
     private final UserRepository userRepository;
     private final StatisticsService statisticsService;
 
-    public GamePlayResponse playMove(GameMove playerMove, String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new UserNotFoundException(userEmail));
-
+    public GamePlayResponse playMove(GameMove playerMove, UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId.toString()));
         GameMove computerMove = RandomMoveSelector.selectRandomMove();
         GameResult result = GameRuleEngine.determineWinner(playerMove, computerMove);
 
@@ -48,8 +48,8 @@ public class GameService {
                 .build();
     }
 
-    public List<GamePlayResponse> getHistory(String userEmail) {
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException(userEmail));
+    public List<GamePlayResponse> getHistory(UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId.toString()));
         List<GameMatch> matches = gameMatchRepository.findTop5ByUserIdOrderByPlayedAtDesc(user.getId());
         return matches.stream().map(match -> GamePlayResponse.builder()
                 .id(match.getId())

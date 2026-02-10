@@ -1,14 +1,16 @@
 package com.rockpaperscissors.controller;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,10 +30,11 @@ class StatisticsControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private StatisticsService statisticsService;
 
-    private static final String TEST_EMAIL = "test@example.com";
+    private static final String TEST_USER_ID_STRING = "550e8400-e29b-41d4-a716-446655440000";
+    private static final UUID TEST_USER_ID = UUID.fromString(TEST_USER_ID_STRING);
     private static final String API_BASE = "/api/statistics";
 
     private UserStatisticsResponse userStatisticsResponse;
@@ -50,9 +53,9 @@ class StatisticsControllerTest {
 
     @Test
     @DisplayName("Should get user statistics successfully")
-    @WithMockUser(username = TEST_EMAIL)
+    @WithMockUser(username = TEST_USER_ID_STRING)
     void testGetMyStatisticsSuccessfully() throws Exception {
-        when(statisticsService.getUserStatistics(anyString()))
+        when(statisticsService.getUserStatistics(TEST_USER_ID))
                 .thenReturn(userStatisticsResponse);
 
         mockMvc.perform(get(API_BASE + "/my-stats")

@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +41,7 @@ class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final Long TEST_USER_ID = 1L;
+    private static final UUID TEST_USER_ID = UUID.randomUUID();
     private static final String TEST_USERNAME = "testuser";
     private static final String TEST_EMAIL = "test@example.com";
     private static final String TEST_PASSWORD = "password123";
@@ -96,7 +98,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.data.token").value(TEST_TOKEN))
                 .andExpect(jsonPath("$.data.email").value(TEST_EMAIL))
                 .andExpect(jsonPath("$.data.username").value(TEST_USERNAME))
-                .andExpect(jsonPath("$.data.id").value(1L));
+                .andExpect(jsonPath("$.data.id").value(TEST_USER_ID.toString()));
     }
 
     @Test
@@ -152,7 +154,7 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Login successful"))
-                .andExpect(jsonPath("$.data.id").value(1L))
+                .andExpect(jsonPath("$.data.id").value(TEST_USER_ID.toString()))
                 .andExpect(jsonPath("$.data.username").value(TEST_USERNAME))
                 .andExpect(jsonPath("$.data.email").value(TEST_EMAIL))
                 .andExpect(jsonPath("$.data.token").value(TEST_TOKEN));

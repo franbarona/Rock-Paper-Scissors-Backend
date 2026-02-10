@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +37,7 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private static final Long TEST_USER_ID = 1L;
+    private static final UUID TEST_USER_ID = UUID.randomUUID();
     private static final String TEST_USERNAME = "testuser";
     private static final String TEST_EMAIL = "test@example.com";
     private static final String NEW_EMAIL = "newemail@example.com";
@@ -53,25 +54,25 @@ class UserServiceTest {
     void testGetCurrentUserSuccessfully() {
         User user = createUser(TEST_USER_ID, TEST_USERNAME, TEST_EMAIL);
 
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(user));
 
-        UserResponse response = userService.getCurrentUser(TEST_EMAIL);
+        UserResponse response = userService.getCurrentUser(TEST_USER_ID);
 
         assertNotNull(response);
         assertEquals(TEST_USER_ID, response.getId());
         assertEquals(TEST_USERNAME, response.getUsername());
         assertEquals(TEST_EMAIL, response.getEmail());
-        verify(userRepository).findByEmail(TEST_EMAIL);
+        verify(userRepository).findById(TEST_USER_ID);
     }
 
     @Test
     @DisplayName("Should throw UserNotFoundException when user not found")
     void testGetCurrentUserNotFound() {
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class,
-                () -> userService.getCurrentUser(TEST_EMAIL));
-        verify(userRepository).findByEmail(TEST_EMAIL);
+                () -> userService.getCurrentUser(TEST_USER_ID));
+        verify(userRepository).findById(TEST_USER_ID);
     }
 
     // ==================== updateCurrentUser() ====================
@@ -83,12 +84,12 @@ class UserServiceTest {
         UpdateUserRequest request = new UpdateUserRequest(NEW_USERNAME, NEW_EMAIL);
         User updatedUser = createUser(TEST_USER_ID, NEW_USERNAME, NEW_EMAIL);
 
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(user));
         when(userRepository.existsByEmail(NEW_EMAIL)).thenReturn(false);
         when(userRepository.existsByUsername(NEW_USERNAME)).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
 
-        UserResponse response = userService.updateCurrentUser(TEST_EMAIL, request);
+        UserResponse response = userService.updateCurrentUser(TEST_USER_ID, request);
 
         assertNotNull(response);
         assertEquals(NEW_USERNAME, response.getUsername());
@@ -101,10 +102,10 @@ class UserServiceTest {
     void testUpdateCurrentUserNotFound() {
         UpdateUserRequest request = new UpdateUserRequest(NEW_USERNAME, NEW_EMAIL);
 
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class,
-                () -> userService.updateCurrentUser(TEST_EMAIL, request));
+                () -> userService.updateCurrentUser(TEST_USER_ID, request));
         verify(userRepository, never()).save(any(User.class));
     }
 
@@ -114,11 +115,11 @@ class UserServiceTest {
         User user = createUser(TEST_USER_ID, TEST_USERNAME, TEST_EMAIL);
         UpdateUserRequest request = new UpdateUserRequest(NEW_USERNAME, NEW_EMAIL);
 
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(user));
         when(userRepository.existsByEmail(NEW_EMAIL)).thenReturn(true);
 
         assertThrows(UserAlreadyExistsException.class,
-                () -> userService.updateCurrentUser(TEST_EMAIL, request));
+                () -> userService.updateCurrentUser(TEST_USER_ID, request));
         verify(userRepository, never()).save(any(User.class));
     }
 
@@ -128,12 +129,12 @@ class UserServiceTest {
         User user = createUser(TEST_USER_ID, TEST_USERNAME, TEST_EMAIL);
         UpdateUserRequest request = new UpdateUserRequest(NEW_USERNAME, NEW_EMAIL);
 
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(user));
         when(userRepository.existsByEmail(NEW_EMAIL)).thenReturn(false);
         when(userRepository.existsByUsername(NEW_USERNAME)).thenReturn(true);
 
         assertThrows(UserAlreadyExistsException.class,
-                () -> userService.updateCurrentUser(TEST_EMAIL, request));
+                () -> userService.updateCurrentUser(TEST_USER_ID, request));
         verify(userRepository, never()).save(any(User.class));
     }
 
@@ -143,10 +144,10 @@ class UserServiceTest {
         User user = createUser(TEST_USER_ID, TEST_USERNAME, TEST_EMAIL);
         UpdateUserRequest request = new UpdateUserRequest(TEST_USERNAME, TEST_EMAIL);
 
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        UserResponse response = userService.updateCurrentUser(TEST_EMAIL, request);
+        UserResponse response = userService.updateCurrentUser(TEST_USER_ID, request);
 
         assertNotNull(response);
         assertEquals(TEST_USERNAME, response.getUsername());
@@ -158,7 +159,7 @@ class UserServiceTest {
 
     // ==================== HELPER METHOD ====================
 
-    private User createUser(Long id, String username, String email) {
+    private User createUser(UUID id, String username, String email) {
         return User.builder()
                 .id(id)
                 .username(username)

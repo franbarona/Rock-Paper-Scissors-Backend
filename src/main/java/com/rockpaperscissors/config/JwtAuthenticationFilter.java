@@ -8,6 +8,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.rockpaperscissors.service.JwtService;
 
 import java.io.IOException;
+import java.util.UUID;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,8 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
 
             if (jwtService.isValidToken(token)) {
-                String email = jwtService.extractEmail(token);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,
+                UUID userId = jwtService.extractUserId(token);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId,
                         null, null);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

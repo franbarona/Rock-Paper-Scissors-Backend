@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -14,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
-    private static final Long TEST_USER_ID = 1L;
+    private static final UUID TEST_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private static final String TEST_USERNAME = "testuser";
     private static final String TEST_EMAIL = "test@example.com";
     private static final String TEST_PASSWORD = "password123";
@@ -71,7 +71,7 @@ class AuthServiceTest {
         when(userRepository.existsByEmail(TEST_EMAIL)).thenReturn(false);
         when(passwordEncoder.encode(TEST_PASSWORD)).thenReturn("encoded-password");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
-        when(jwtService.generateToken(anyLong(), anyString(), anyString())).thenReturn(TEST_TOKEN);
+        when(jwtService.generateToken(any(UUID.class), anyString(), anyString())).thenReturn(TEST_TOKEN);
         doNothing().when(statisticsService).updateUserStatistics(any(User.class), isNull());
 
         RegisterResponse response = authService.register(request);
@@ -80,7 +80,7 @@ class AuthServiceTest {
         assertEquals(TEST_TOKEN, response.getToken());
         assertEquals(TEST_EMAIL, response.getEmail());
         verify(userRepository).save(any(User.class));
-        verify(jwtService).generateToken(anyLong(), eq(TEST_EMAIL), eq(TEST_USERNAME));
+        verify(jwtService).generateToken(any(UUID.class), eq(TEST_EMAIL), eq(TEST_USERNAME));
     }
 
     @Test
@@ -112,7 +112,7 @@ class AuthServiceTest {
     @DisplayName("Should login user successfully")
     void testLoginSuccessfully() {
         LoginRequest request = new LoginRequest(TEST_EMAIL, TEST_PASSWORD);
-        User user = createUser(1L, TEST_USERNAME, TEST_EMAIL, "encoded-password");
+        User user = createUser(TEST_USER_ID, TEST_USERNAME, TEST_EMAIL, "encoded-password");
 
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(TEST_PASSWORD, user.getPassword())).thenReturn(true);
@@ -124,7 +124,7 @@ class AuthServiceTest {
         assertEquals(TEST_TOKEN, response.getToken());
         assertEquals(TEST_USERNAME, response.getUsername());
         assertEquals(TEST_EMAIL, response.getEmail());
-        assertEquals(1L, response.getId());
+        assertEquals(TEST_USER_ID, response.getId());
     }
 
     @Test
@@ -135,25 +135,25 @@ class AuthServiceTest {
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
 
         assertThrows(InvalidCredentialsException.class, () -> authService.login(request));
-        verify(jwtService, never()).generateToken(anyLong(), anyString(), anyString());
+        verify(jwtService, never()).generateToken(any(UUID.class), anyString(), anyString());
     }
 
     @Test
     @DisplayName("Should throw InvalidCredentialsException when password is incorrect")
     void testLoginInvalidPassword() {
         LoginRequest request = new LoginRequest(TEST_EMAIL, TEST_PASSWORD);
-        User user = createUser(1L, TEST_USERNAME, TEST_EMAIL, "encoded-password");
+        User user = createUser(TEST_USER_ID, TEST_USERNAME, TEST_EMAIL, "encoded-password");
 
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(TEST_PASSWORD, user.getPassword())).thenReturn(false);
 
         assertThrows(InvalidCredentialsException.class, () -> authService.login(request));
-        verify(jwtService, never()).generateToken(anyLong(), anyString(), anyString());
+        verify(jwtService, never()).generateToken(any(UUID.class), anyString(), anyString());
     }
 
     // ==================== HELPER METHOD ====================
 
-    private User createUser(Long id, String username, String email, String password) {
+    private User createUser(UUID id, String username, String email, String password) {
         return User.builder()
                 .id(id)
                 .username(username)

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,13 +38,13 @@ class StatisticsServiceTest {
     @InjectMocks
     private StatisticsService statisticsService;
 
+    private static final UUID TEST_USER_ID = UUID.randomUUID();
     private static final String TEST_EMAIL = "test@example.com";
     private static final String TEST_USERNAME = "testuser";
-    private static final Long TEST_USER_ID = 1L;
 
+    private static final UUID TEST_USER_ID_2 = UUID.randomUUID();
     private static final String TEST_EMAIL_2 = "test2@example.com";
     private static final String TEST_USERNAME_2 = "testuser2";
-    private static final Long TEST_USER_ID_2 = 2L;
 
     private User user;
     private User user2;
@@ -87,11 +88,11 @@ class StatisticsServiceTest {
     @Test
     @DisplayName("Should get user statistics successfully")
     void testGetUserStatisticsSuccessfully() {
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(user));
         when(userStatisticsRepository.findByUserId(TEST_USER_ID))
                 .thenReturn(Optional.of(userStatistics));
 
-        UserStatisticsResponse response = statisticsService.getUserStatistics(TEST_EMAIL);
+        UserStatisticsResponse response = statisticsService.getUserStatistics(TEST_USER_ID);
 
         assertEquals(TEST_USER_ID, response.getUserId());
         assertEquals(TEST_USERNAME, response.getUsername());
@@ -104,20 +105,20 @@ class StatisticsServiceTest {
     @Test
     @DisplayName("Should throw UserNotFoundException when user does not exist")
     void testGetUserStatisticsUserNotFound() {
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class,
-                () -> statisticsService.getUserStatistics(TEST_EMAIL));
+                () -> statisticsService.getUserStatistics(TEST_USER_ID));
     }
 
     @Test
     @DisplayName("Should throw StatisticsNotFoundException when statistics not found for user")
     void testGetUserStatisticsNotFound() {
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(user));
         when(userStatisticsRepository.findByUserId(TEST_USER_ID)).thenReturn(Optional.empty());
 
         assertThrows(StatisticsNotFoundException.class,
-                () -> statisticsService.getUserStatistics(TEST_EMAIL));
+                () -> statisticsService.getUserStatistics(TEST_USER_ID));
     }
 
     // ==================== updateUserStatistics() ====================

@@ -1,12 +1,14 @@
 package com.rockpaperscissors.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.rockpaperscissors.enums.GameMove;
 import com.rockpaperscissors.enums.GameResult;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,8 +32,9 @@ import lombok.NoArgsConstructor;
 public class GameMatch {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "TEXT")
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     private GameMove playerMove;

@@ -1,6 +1,7 @@
 package com.rockpaperscissors.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,16 +25,16 @@ public class GameController {
     public ResponseEntity<ApiResponse<GamePlayResponse>> playMove(
             Authentication authentication,
             @RequestBody GamePlayRequest request) {
-        String email = authentication.getName();
-        GamePlayResponse response = gameService.playMove(request.getMove(), email);
+        UUID userId =  UUID.fromString(authentication.getName());
+        GamePlayResponse response = gameService.playMove(request.getMove(), userId);
         return ResponseEntity.ok(ApiResponse.success(response, "Game played successfully"));
     }
 
     @GetMapping("/history")
     public ResponseEntity<ApiResponse<List<GamePlayResponse>>> getHistory(
             Authentication authentication) {
-        String email = authentication.getName();
-        List<GamePlayResponse> history = gameService.getHistory(email);
+        UUID userId = UUID.fromString(authentication.getName());
+        List<GamePlayResponse> history = gameService.getHistory(userId);
         return ResponseEntity.ok(ApiResponse.success(history, "Game history retrieved successfully"));
     }
 }

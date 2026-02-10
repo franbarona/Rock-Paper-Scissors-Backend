@@ -5,6 +5,9 @@ import com.rockpaperscissors.dto.response.ApiResponse;
 import com.rockpaperscissors.dto.response.UserResponse;
 import com.rockpaperscissors.service.UserService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +23,8 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(Authentication authentication) {
-        String email = authentication.getName();
-        UserResponse user = userService.getCurrentUser(email);
+        UUID userId = UUID.fromString(authentication.getName());
+        UserResponse user = userService.getCurrentUser(userId);
         return ResponseEntity.ok(ApiResponse.success(user, "User retrieved successfully"));
     }
 
@@ -29,8 +32,8 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserResponse>> updateCurrentUser(
             Authentication authentication,
             @Valid @RequestBody UpdateUserRequest updateRequest) {
-        String email = authentication.getName();
-        UserResponse user = userService.updateCurrentUser(email, updateRequest);
+        UUID userId = UUID.fromString(authentication.getName());
+        UserResponse user = userService.updateCurrentUser(userId, updateRequest);
         return ResponseEntity.ok(ApiResponse.success(user, "User updated successfully"));
     }
 }

@@ -1,7 +1,7 @@
 package com.rockpaperscissors.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,14 +9,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,13 +37,14 @@ class GameControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private GameService gameService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final String TEST_EMAIL = "test@example.com";
+    private static final String TEST_USER_ID_STRING = "550e8400-e29b-41d4-a716-446655440000";
+    private static final UUID TEST_USER_ID = UUID.fromString(TEST_USER_ID_STRING);
     private static final String API_BASE = "/api/game";
 
     private GamePlayRequest gamePlayRequest;
@@ -65,9 +67,9 @@ class GameControllerTest {
 
     @Test
     @DisplayName("Should play move successfully")
-    @WithMockUser(username = TEST_EMAIL)
+    @WithMockUser(username = TEST_USER_ID_STRING)
     void testPlayMoveSuccessfully() throws Exception {
-        when(gameService.playMove(any(GameMove.class), anyString()))
+        when(gameService.playMove(any(GameMove.class), eq(TEST_USER_ID)))
                 .thenReturn(gamePlayResponse);
 
         mockMvc.perform(post(API_BASE + "/play")
@@ -94,7 +96,7 @@ class GameControllerTest {
 
     @Test
     @DisplayName("Should get game history successfully")
-    @WithMockUser(username = TEST_EMAIL)
+    @WithMockUser(username = TEST_USER_ID_STRING)
     void testGetHistorySuccessfully() throws Exception {
         GamePlayResponse response1 = GamePlayResponse.builder()
                 .playerMove(GameMove.ROCK)
@@ -109,7 +111,7 @@ class GameControllerTest {
                 .build();
 
         List<GamePlayResponse> history = List.of(response1, response2);
-        when(gameService.getHistory(anyString())).thenReturn(history);
+        when(gameService.getHistory(TEST_USER_ID)).thenReturn(history);
 
         mockMvc.perform(get(API_BASE + "/history")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -125,9 +127,9 @@ class GameControllerTest {
 
     @Test
     @DisplayName("Should get empty history when user has no games")
-    @WithMockUser(username = TEST_EMAIL)
+    @WithMockUser(username = TEST_USER_ID_STRING)
     void testGetEmptyHistory() throws Exception {
-        when(gameService.getHistory(anyString())).thenReturn(List.of());
+        when(gameService.getHistory(TEST_USER_ID)).thenReturn(List.of());
 
         mockMvc.perform(get(API_BASE + "/history")
                 .contentType(MediaType.APPLICATION_JSON))

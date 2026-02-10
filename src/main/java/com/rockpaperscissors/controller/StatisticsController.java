@@ -1,5 +1,7 @@
 package com.rockpaperscissors.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +24,8 @@ public class StatisticsController {
     @GetMapping("/my-stats")
     public ResponseEntity<ApiResponse<UserStatisticsResponse>> getMyStatistics(
             Authentication authentication) {
-        String email = authentication.getName();
-        UserStatisticsResponse response = statisticsService.getUserStatistics(email);
+        UUID userId = UUID.fromString(authentication.getName());
+        UserStatisticsResponse response = statisticsService.getUserStatistics(userId);
         return ResponseEntity.ok(ApiResponse.success(response, "Statistics retrieved successfully"));
     }
 }

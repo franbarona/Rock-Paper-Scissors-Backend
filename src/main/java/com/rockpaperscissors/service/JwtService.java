@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,10 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expirationTime;
 
-    public String generateToken(Long userId, String email, String username) {
+    public String generateToken(UUID userId, String email, String username) {
         return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", userId)
+                .setSubject(userId.toString())
+                .claim("email", email)
                 .claim("username", username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
@@ -32,8 +33,8 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractEmail(String token) {
-        return getClaims(token).getSubject();
+    public UUID extractUserId(String token) {
+        return UUID.fromString(getClaims(token).getSubject());
     }
 
     public boolean isValidToken(String token) {

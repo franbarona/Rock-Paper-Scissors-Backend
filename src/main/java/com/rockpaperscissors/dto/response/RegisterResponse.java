@@ -1,5 +1,7 @@
 package com.rockpaperscissors.dto.response;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +16,5 @@ public class RegisterResponse {
     private String token;
     private String username;
     private String email;
-    private Long id;
+    private UUID id;
 }

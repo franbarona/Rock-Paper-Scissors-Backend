@@ -1,5 +1,7 @@
 package com.rockpaperscissors.dto.response;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserStatisticsResponse {
 
-    private Long userId;
+    private UUID userId;
     private String username;
     private Integer totalMatches;
     private Integer totalWins;

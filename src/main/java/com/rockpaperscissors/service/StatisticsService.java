@@ -1,5 +1,7 @@
 package com.rockpaperscissors.service;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.rockpaperscissors.dto.response.UserStatisticsResponse;
@@ -19,10 +21,10 @@ public class StatisticsService {
     private final UserRepository userRepository;
     private final UserStatisticsRepository userStatisticsRepository;
 
-    public UserStatisticsResponse getUserStatistics(String email) {
-        User user = userRepository.findByEmail(email)
+    public UserStatisticsResponse getUserStatistics(UUID id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> {
-                    return new UserNotFoundException(email);
+                    return new UserNotFoundException(id.toString());
                 });
 
         UserStatistics stats = userStatisticsRepository.findByUserId(user.getId())
